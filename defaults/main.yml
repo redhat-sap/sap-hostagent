@@ -5,6 +5,8 @@
 # Want extensive debugging
 debuglevel: 3
 
+# Default hostanem
+sap_hostname: "{{ ansible_hostname }}"
 
 # SAP ProfilePath (You should not need to change the default)
 sap_usr_sap: "/usr/sap"
@@ -32,6 +34,10 @@ sap_hana_hostagent_ssl: "MyS3cret!"
 #sap_hana_hostagent_archive: /path/to/sap_hana_hostagent_archive
 
 # In case you install/upgrade from archive this is the default unpack command
-sap_hana_hostagent_unarchive_cmd: "/usr/sap/hostctrl/exe/SAPCAR xvf"
+sap_hana_hostagent_unarchive_cmd: "/usr/sap/hostctrl/exe/SAPCAR -xvf "
+
+## In case you want to use the shipped hostagent from HANADB Use this command definition:
+# sap_hana_hostagent_archive: "/mnt/HANA_EXPRESS_20/DATA_UNITS/HDB_SERVER_LINUX_X86_64/server/HOSTAGENT.TGZ"
+# sap_hana_hostagent_unarchive_cmd: "tar --strip-components=3 -xzf "
 ...
   

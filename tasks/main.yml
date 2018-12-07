@@ -29,7 +29,7 @@
 # Installation from rpm
 - import_tasks: installation.yml
   tags:
-    - 'role::sap-hana-hostagent
+    - 'role::sap-hana-hostagent'
     - 'role::sap-hana-hostagent:install'
   
 # https://help.sap.com/viewer/6e1636d91ccc458c987094ee1fb864ae/721%20PL003%20CORR9/de-DE/a429500ec8744a20864033686944f12a.html

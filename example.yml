@@ -1,68 +1,34 @@
 ---
 - hosts: hana
-  remote_user: root
 
   vars:
-          # subscribe-rhn role variables
-          reg_activation_key: myregistration
-          reg_organization_id: 123456
+          # SAP-BASE-ROLE
+          # can use defaults
 
-          repositories:
-                  - rhel-7-server-rpms
-                  - rhel-sap-hana-for-rhel-7-server-rpms
-
-          # disk-init role variables
-          disks:
-                  /dev/vdc: vg00
-                  /dev/vdb: vg00
-          logvols:
-                  hana_shared:
-                          size: 24G
-                          vol: vg00
-                          mountpoint: /hana/shared
-                  hana_data:
-                          size: 24G
-                          vol: vg00
-                          mountpoint: /hana/data
-                  hana_logs:
-                          size: 12G
-                          vol: vg00
-                          mountpoint: /hana/logs
-                  usr_sap:
-                          size: 49G
-                          vol: vg00
-                          mountpoint: /usr/sap
-
-
-          # rhel-system-roles.timesync variables
-          ntp_servers:
-                  - hostname: 0.rhel.pool.ntp.org
-                    iburst: yes
-                  - hostname: 1.rhel.pool.ntp.org
-                    iburst: yes
-                  - hostname: 2.rhel.pool.ntp.org
-                    iburst: yes
-                  - hostname: 3.rhel.pool.ntp.org
-                    iburst: yes
-
-
-          # SAP Precoonfigure role
+          # sap-hana-preconfigure
+          sap_hana_preconfigure_min_package_check: false
+          sap_hana_preconfigure_reboot_after_update: false
+          sap_hana_preconfigure_reboot_timeout: 600
 
           # SAP-Media Check
-          install_nfs: "mynfsserver:/installi-export"
-          installroot: /install
-          hana_installdir: "{{ installroot + '/HANA2SPS02' }}"
+          sap_hana_mediacheck_serverpath: "vm30.tom.lan:/install"
+          sap_hana_mediacheck_mountpoint: /install
+          sap_hana_installdir: "{{ sap_hana_mediacheck_mountpoint + '/HANA_EXPRESS_20/DATA_UNITS/HDB_SERVER_LINUX_' + ansible_architecture| upper }}"
 
-          hana_pw_hostagent_ssl: "MyS3cret!"
-          id_user_sapadm: "20202"
-          id_group_shm: "20202"
-          id_group_sapsys: "20202"
-          pw_user_sapadm_clear: "MyS3cret!"
+          # SAP HANA Hostagent:
+          sap_hana_hostagent_archive: "{{ sap_hana_mediacheck_mountpoint + '/hostagent-7.21/SAPHOSTAGENT40_40-20009394.SAR' }}"
+          #sap_hana_hostagent_archive: "{{ sap_hana_installdir + '/server/HOSTAGENT.TGZ' }}"
+          #sap_hana_hostagent_unarchive_cmd: "tar --strip-components=3 -xzf "
+          #sap_uid_sapadm: 20202
+          #sap_gid_sapsys: 20202
+
+          sap_hana_hostagent_sapadm_pw_clear: "MyS3cret!"
+          sap_hana_hostagent_ssl_pw: "MyS3cret!"
+
+          #id_group_shm: "30220"
 
   roles:
-          - { role: mk-ansible-roles.subscribe-rhn }
-          - { role: mk-ansible-roles.disk-init }
-          - { role: linux-system-roles.timesync }
-          - { role: mk-ansible-roles.preconfigure }
-          - { role: mk-ansible-roles.deployment }
-          - { role: mk-ansible-roles.hsr }
+    - sap-base-settings
+    - sap-hana-mediacheck
+    - sap-hana-preconfigure
+    - sap-hana-hostagent

@@ -66,7 +66,7 @@
 #
 # the rpm is the recommended installation method, because it handles initial install & updates appropriately
 #
-- name: ensure SAP Host Agent is installed
+- name: ensure SAP Host Agent is installed or updated from RPM
   package:
     name: "{{ sap_hana_hostagent_rpm }}"
     state: present
@@ -81,23 +81,43 @@
 
     - name: check if hostagent is already installed
       stat:
-        path: "{{ usr_sap + '/hostctrl/exe/saphostexec' }}"
+        path: "{{ sap_usr_sap + '/hostctrl/exe/saphostexec' }}"
       register: sap_hana_hostagent_register_update
+
+    - name: check if archive exists and is SAR File
+      stat:
+        path: "{{ sap_hana_hostagent_archive }}"
+      register: sap_hana_hostagent_register_archive
 
     - name: ensure hostagent is updated from sar file
       shell: | 
-        "{{ usr_sap + '/hostctrl/exe/saphostexec' }}" -upgrade -verify -archive "{{ sap_hana_hostagent_archive }}"
+        "{{ sap_usr_sap + '/hostctrl/exe/saphostexec' }}" -upgrade -archive "{{ sap_hana_hostagent_archive }}"
+      register: sap_hana_hostagent_register_update_log
       when:
-        - sap_hana_hostagent_register_update.stat  
+        - sap_hana_hostagent_register_update.stat.exists  
+        - sap_hana_hostagent_register_archive.stat.exists  
+        - sap_hana_hostagent_register_archive.stat.mimetype == "application/octet-stream"
         - not ((sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | trim == ''))
+
+      ###
+      #  Wenn Update durchgeführt wird ist folgender Outout in STDERR:
+      # [OK] SAPHostExec / SAPHostControl successfully upgraded
+      #
+      #  Wenn Update nicht nötig kommt folgeneder Output in stderr:
+      # [OK] No upgrade necessary
+      # 
+      # 
+      # TODO: entsprechende changed when condition zufügen
+
+
 
     - name: ensure hostagent is updated from unpacked archive
       shell: |
-        ./saphostexec -upgrade -verify
+        ./saphostexec -upgrade 
       args:
         chdir: "{{ sap_hana_hostagent_installdir }}"
       when: 
-        - sap_hana_hostagent_register_update.stat
+        - sap_hana_hostagent_register_update.stat.exists
         - (sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | trim == '')
         - not ((sap_hana_hostagent_installdir is undefined) or (sap_hana_hostagent_installdir is none) or (sap_hana_hostagent_installdir | trim == ''))
 
@@ -108,15 +128,15 @@
           block:
             - name: ensure /tmp/install exists
               file:
-                name: /tmp/install-hostagent
-                type: directory
-                state: present
+                path: /tmp/install-hostagent
+                state: directory
+                mode: 0755
 
             - name: unpack Hana Archive
-              shell: |
-                "{{ sap_hana_hostagent_unarchive_cmd }}" "{{ sap_hana_hostagent_archive }}"
+              command: "{{ sap_hana_hostagent_unarchive_cmd + ' ' + sap_hana_hostagent_archive }}"
               args:
                 chdir: /tmp/install-hostagent
+                creates: /tmp/install-hostagent/saphostexec
 
             - name: set installation path
               set_fact:
@@ -126,14 +146,20 @@
 
         - name: ensure SAP Host Agent is installed from "{{ sap_hana_hostagent_installdir }}"
           shell: |
-            ./saphostexec -install -verify
+            ./saphostexec -install 
           args: 
             chdir: "{{ sap_hana_hostagent_installdir }}"
           register: sap_hana_hostagent_register_install
 
+        - name: ensure tmp directory is removed
+          file:
+            path: /tmp/install-hostagent
+            state: absent
+
+
         ### MUSS DER HOSTAGENT AN DIESER STELLE GESTARTET WERDEN ??? 
       when: 
-        - not sap_hana_hostagent_register_update.stat
+        - not sap_hana_hostagent_register_update.stat.exists
 
   when: (sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm | trim == '')
 
