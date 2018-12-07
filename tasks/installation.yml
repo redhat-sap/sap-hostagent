@@ -1,12 +1,15 @@
 ---
 
-#- name: Execute HANA Host Agent SSL Configuration
+# Overview of SAP Notes required for installation of SAP Host Agent
 # andbuick / 08.10.2017
+# 
 # SAP NOTE 2130510  Version 3 / 28.06.2016 latest Host Agent 7.21
 # SAP NOTE 1907566 Version 5 / 27.02.2017 latest documentation
 # SAP NOTE 401162 Version 20 / 20.03.2017
 # SAP NOTE 1292836 Version 6 / 18.12.2014
 # SAP NOTE 1031096 Version 36 / 20.10.2015
+#
+# Important information on SAP Host Agent:
 #
 # Vom SAP Host-Agent werden keine Linux-Kernel-Parameter geändert.
 # Service in etc/service/saphostctrl Default Port 1128 SAP HANA & SAP NetWeaver Services SOAP/HTTP
@@ -26,49 +29,122 @@
 
 # Installation of SAP HANA Host Agent
 # Need this for ScaleOut Enviornments
+
 # Did not work with ssh under SLES12, RHEL6, RHEL7
 # https://access.redhat.com/solutions/1370033
 
-- name: Installation File SAP HANA Host Agent
-  template:
-    src: preconfigure_sap_install_saphostagent.sh.j2
-    dest: /usr/local/bin/preconfigure_sap_install_saphostagent.sh
-    mode: 0755
+###### Preparation step
+## Create USER and GROUP for SAP HOST Agent
+- name: ensure sapsys group is created with gid {{ sap_gid_sapsys }}
+  group:
+    name: sapsys
+    gid: "{{ sap_gid_sapsys }}"
+    state: present
 
-- name: Install SAP HANA Host Agent
-  shell: /usr/local/bin/preconfigure_sap_install_saphostagent.sh
-  args:
-    creates: /usr/sap/hostctrl/exe/saphostexec
-
-# Setup sap hana Hostagent SSL
-# http://help.sap.com/saphelp_nw73ehp1/helpdata/en/8d/12f7b9244b44219bd14d619d3a2123/content.htm
-# Based on RHEL Documentation https://access.redhat.com/solutions/1370033
-- name: Create directory for SAP HANA Hostagent SSL Configuration
-  file:
-    path: /usr/sap/hostctrl/exe/sec
-    state: directory
-    mode: 0755
-    owner: sapadm
+- name: ensure sapadm user is created with uid {{ sap_uid_sapadm }}
+  user:
+    name: sapadm
+    uid: "{{ sap_uid_sapadm }}"
+    comment: "SAP Host Agent"
     group: sapsys
 
-- name: Deployfile for HANA Host Agent SSL Configuration
-  template:
-    src: preconfigure_sap_install_sslforsaphostagent.sh.j2
-    dest: /usr/local/bin/preconfigure_sap_install_sslforsaphostagent.sh
-    mode: 0755
+# Check if installatian parameters are set
+- name: Check required parameters
+  fail:
+    msg: " *****************************************************************************\n
+          Please provide any of the following \n
+            - sap_hana_hostagent_installdir: /path/to/unpacked/hostagent packages\n
+            - sap_hana_hostagent_rpm: /path/to/hostagentrpm\n
+            - sap_hana_hostagent_archive: /path/to/sap_hana_hostagent_archive\n
+          *****************************************************************************\n"
+  when:
+    - (sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm | trim == '')
+    - (sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | trim == '')
+    - (sap_hana_hostagent_installdir is undefined) or (sap_hana_hostagent_installdir is none) or (sap_hana_hostagent_installdir | trim == '')
 
+### Install from RPM
+#
+# the rpm is the recommended installation method, because it handles initial install & updates appropriately
+#
+- name: ensure SAP Host Agent is installed
+  package:
+    name: "{{ sap_hana_hostagent_rpm }}"
+    state: present
+  when: not((sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm | trim == ''))
 
-- name: Ensure SSL is configured for saphostagent
-  shell: /usr/local/bin/preconfigure_sap_install_sslforsaphostagent.sh
-  notify: "Restart HostAgent"
-  args:
-    creates: /usr/sap/hostctrl/exe/sec/SAPSSLS.pse
+### Install from Archive
+#
+# install the stuff from the SAR archive or installation bundle
+#
+- name: ensure SAP Host Agent is installed or updated from archive
+  block:
 
-- name: Change user for SAPSSLS.pse file for SAP Host Agent
-  file:
-    path: /usr/sap/hostctrl/exe/sec/SAPSSLS.pse
-    state: file
-    owner: sapadm
-    group: sapsys
+    - name: check if hostagent is already installed
+      stat:
+        path: "{{ usr_sap + '/hostctrl/exe/saphostexec' }}"
+      register: sap_hana_hostagent_register_update
 
-...
+    - name: ensure hostagent is updated from sar file
+      shell: | 
+        "{{ usr_sap + '/hostctrl/exe/saphostexec' }}" -upgrade -verify -archive "{{ sap_hana_hostagent_archive }}"
+      when:
+        - sap_hana_hostagent_register_update.stat  
+        - not ((sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | trim == ''))
+
+    - name: ensure hostagent is updated from unpacked archive
+      shell: |
+        ./saphostexec -upgrade -verify
+      args:
+        chdir: "{{ sap_hana_hostagent_installdir }}"
+      when: 
+        - sap_hana_hostagent_register_update.stat
+        - (sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | trim == '')
+        - not ((sap_hana_hostagent_installdir is undefined) or (sap_hana_hostagent_installdir is none) or (sap_hana_hostagent_installdir | trim == ''))
+
+    - name: Initial install of SAP Host Agent 
+      block:
+        ### Unpack if it is provided as an archive
+        - name: Unpack Archive
+          block:
+            - name: ensure /tmp/install exists
+              file:
+                name: /tmp/install-hostagent
+                type: directory
+                state: present
+
+            - name: unpack Hana Archive
+              shell: |
+                "{{ sap_hana_hostagent_unarchive_cmd }}" "{{ sap_hana_hostagent_archive }}"
+              args:
+                chdir: /tmp/install-hostagent
+
+            - name: set installation path
+              set_fact:
+                sap_hana_hostagent_installdir: /tmp/install-hostagent
+
+          when: not((sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | trim == ''))
+
+        - name: ensure SAP Host Agent is installed from "{{ sap_hana_hostagent_installdir }}"
+          shell: |
+            ./saphostexec -install -verify
+          args: 
+            chdir: "{{ sap_hana_hostagent_installdir }}"
+          register: sap_hana_hostagent_register_install
+
+        ### MUSS DER HOSTAGENT AN DIESER STELLE GESTARTET WERDEN ??? 
+      when: 
+        - not sap_hana_hostagent_register_update.stat
+
+  when: (sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm | trim == '')
+
+#### NOW COMES THE OLD STUFF
+#- name: Installation File SAP HANA Host Agent
+#  template:
+#    src: preconfigure_sap_install_saphostagent.sh.j2
+#    dest: /usr/local/bin/preconfigure_sap_install_saphostagent.sh
+#    mode: 0755
+#- name: Install SAP HANA Host Agent
+#  shell: /usr/local/bin/preconfigure_sap_install_saphostagent.sh
+#  args:
+#    creates: /usr/sap/hostctrl/exe/saphostexec
+
