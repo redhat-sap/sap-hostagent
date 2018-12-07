@@ -1,0 +1,37 @@
+---
+# Global Default variables
+# Adapt to your default settings
+
+# Want extensive debugging
+debuglevel: 3
+
+
+# SAP ProfilePath (You should not need to change the default)
+sap_usr_sap: "/usr/sap"
+# HANA Shared directory
+sap_hana_shared: "/hana/shared"
+# HANA log Directory
+sap_hana_log: "/hana/log"
+# HANA data Directory
+sap_hana_data: "/hana/log"
+
+# UID/GID for sapadm:sapsys
+sap_uid_sapadm: 20202
+sap_gid_sapsys: 20202
+
+# password for user sapadm
+sap_hana_hostagent_sapadm_pw_clear: "MyS3cret!"
+#sap_hana_hostagent_sapadm_pw: "MyS3cret!"
+
+# Secret for password encryption
+sap_hana_hostagent_ssl: "MyS3cret!"
+
+# Define either one of the following variables depending on installation method
+#sap_hana_hostagent_installdir: /path/to/unpacked/hostagent packages
+#sap_hana_hostagent_rpm: /path/to/hostagentrpm
+#sap_hana_hostagent_archive: /path/to/sap_hana_hostagent_archive
+
+# In case you install/upgrade from archive this is the default unpack command
+sap_hana_hostagent_unarchive_cmd: "/usr/sap/hostctrl/exe/SAPCAR xvf"
+...
+  

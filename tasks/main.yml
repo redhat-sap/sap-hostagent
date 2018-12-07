@@ -3,6 +3,7 @@
 #- name: Enable Debugging
 #  debug:
 #    verbosity: "{{ debuglevel }}"
+
 # Thomas Bludau 20170508
 # Might be customized on every customer site
 # It is necessary that you have a fix repository,
@@ -10,25 +11,38 @@
 # Requirement is that the systems have access
 # to correctly configured repositories.
 
-# figure out where the installation media is. This snippet can either mount it centrally from NFS or unpack it locally
-# The following snippet will check if your Hana Install setting is correct and fetches the version of HANA to be installed
-# and stores it in hanaversion.
-# It may also temporary mounts the installation path or an NFS server that contains the rar-files from SAP SWDC
-# Required to run
-# => Move to separate role
-#- include: ./sap-check-media.yml
-#  tags:
-#    - hana-install
-#    - media-check
-#
-## => this is the only role that should survive here
-#- include: ./preconfigure.yml
-#  tags:
-##    - hana-install
-
 - include: ./2528891.yml
 
+####
+# No OS variables to include
+#
+#- name: include os specific vars
+#  include_vars: '{{ item }}'
+#  with_first_found:
+#    - '{{ ansible_distibution }}_{{ ansible_distribution_version }}.yml'
+#    - '{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml'
+#    - '{{ ansible_os_family }}.yml'
+#  tags:
+#    - 'role::sap-hana-hostagent'
+#    - 'role::sap-hana-hostagent:install'
+#    - 'role::sap-hana-hostagent:config'
+
+# Installation from rpm
+- import_tasks: installation_rpm.yml
+  tags:
+    - 'role::sap-hana-hostagent
+    - 'role::sap-hana-hostagent:install'
+  when: not((sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm| trim == '') )
+  
+# Installation from packed or unpacked archive
+- import_tasks: installation_archive.yml
+  tags:
+    - 'role::sap-hana-hostagent
+    - 'role::sap-hana-hostagent:install'
+  when: (sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm| trim == '') 
 
 
-
-...
+- import_tasks: configuration.yml
+  tags:
+    - 'role::sap-hana-hostagent'
+    - 'role::sap-hana-hostagent:config'
