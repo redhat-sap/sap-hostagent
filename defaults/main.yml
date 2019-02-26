@@ -26,7 +26,7 @@ sap_hana_hostagent_sapadm_pw_clear: "MyS3cret!"
 #sap_hana_hostagent_sapadm_pw: "MyS3cret!"
 
 # Secret for password encryption
-sap_hana_hostagent_ssl: "MyS3cret!"
+sap_hana_hostagent_ssl_pw: "MyS3cret!"
 
 # Define either one of the following variables depending on installation method
 #sap_hana_hostagent_installdir: /path/to/unpacked/hostagent packages

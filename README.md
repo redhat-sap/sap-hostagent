@@ -77,7 +77,7 @@ sap_gid_sapsys: 20202
 For the above user, you need to define a password for authentication and SSL encryption:
 ```yaml
 sap_hana_hostagent_sapadm_pw_clear: "MyS3cret!" 
-sap_hana_hostagent_ssl: "MyS3cret!"
+sap_hana_hostagent_ssl_pw: "MyS3cret!"
 ```
 It is recommended to use `ansible-vault` to encrypt these variables.
 
