@@ -15,7 +15,7 @@ sap_hana_shared: "/hana/shared"
 # HANA log Directory
 sap_hana_log: "/hana/log"
 # HANA data Directory
-sap_hana_data: "/hana/log"
+sap_hana_data: "/hana/data"
 
 # UID/GID for sapadm:sapsys
 sap_uid_sapadm: 20202
