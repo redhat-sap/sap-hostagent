@@ -47,6 +47,7 @@
     uid: "{{ sap_uid_sapadm }}"
     comment: "SAP Host Agent"
     group: sapsys
+    password: "{{ sap_hana_hostagent_sapadm_pw_clear|password_hash('sha512') }}"
 
 # Check if installatian parameters are set
 - name: Check required parameters
@@ -126,7 +127,7 @@
         ### Unpack if it is provided as an archive
         - name: Unpack Archive
           block:
-            - name: ensure /tmp/install exists
+            - name: ensure /tmp/install-hostagent exists
               file:
                 path: /tmp/install-hostagent
                 state: directory
