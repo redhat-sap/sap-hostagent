@@ -138,6 +138,8 @@
               args:
                 chdir: /tmp/install-hostagent
                 creates: /tmp/install-hostagent/saphostexec
+              # avoid warning message when unpack command is tar
+              warn: false
 
             - name: set installation path
               set_fact:
