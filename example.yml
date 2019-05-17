@@ -2,6 +2,8 @@
 - hosts: hana
 
   vars:
+          ### OUTDATED ### 
+          ### Need an Update ###
           # SAP-BASE-ROLE
           # can use defaults
 
@@ -19,10 +21,10 @@
           sap_hana_hostagent_archive: "{{ sap_hana_mediacheck_mountpoint + '/hostagent-7.21/SAPHOSTAGENT40_40-20009394.SAR' }}"
           #sap_hana_hostagent_archive: "{{ sap_hana_installdir + '/server/HOSTAGENT.TGZ' }}"
           #sap_hana_hostagent_unarchive_cmd: "tar --strip-components=3 -xzf "
-          #sap_uid_sapadm: 20202
-          #sap_gid_sapsys: 20202
+          sap_sapadm_uid: 20202
+          sap_sapsys_gid: 20202
 
-          sap_hana_hostagent_sapadm_pw_clear: "MyS3cret!"
+          sap_sapadm_pw_clear: "MyS3cret!"
           sap_hana_hostagent_ssl_pw: "MyS3cret!"
 
           #id_group_shm: "30220"

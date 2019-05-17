@@ -68,15 +68,15 @@ sap_hana_data: "/hana/log"
 
 The following variable define the UID and GID for the required user to run hostagent. As this might be used in other SAP software as well, the are prefixed as global variable:
 ```yaml
-sap_uid_sapadm: 20202
-sap_gid_sapsys: 20202
+sap_sapadm_uid: 20202
+sap_sapadm_pw_clear: "MyS3cret!" 
+sap_sapsys_gid: 20202
 ```
 
 ### Mandatory Role variables
 
 For the above user, you need to define a password for authentication and SSL encryption:
 ```yaml
-sap_hana_hostagent_sapadm_pw_clear: "MyS3cret!" 
 sap_hana_hostagent_ssl_pw: "MyS3cret!"
 ```
 It is recommended to use `ansible-vault` to encrypt these variables.

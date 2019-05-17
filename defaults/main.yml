@@ -18,12 +18,9 @@ sap_hana_log: "/hana/log"
 sap_hana_data: "/hana/data"
 
 # UID/GID for sapadm:sapsys
-sap_uid_sapadm: 20202
-sap_gid_sapsys: 20202
-
-# password for user sapadm
-sap_hana_hostagent_sapadm_pw_clear: "MyS3cret!"
-#sap_hana_hostagent_sapadm_pw: "MyS3cret!"
+sap_sapadm_uid: 20202
+sap_sapadm_pw_clear: "MyS3cret!"
+sap_sapsys_gid: 20202
 
 # Secret for password encryption
 sap_hana_hostagent_ssl_pw: "MyS3cret!"

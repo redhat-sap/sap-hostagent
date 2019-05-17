@@ -33,21 +33,45 @@
 # Did not work with ssh under SLES12, RHEL6, RHEL7
 # https://access.redhat.com/solutions/1370033
 
-###### Preparation step
+###### Preparation steps
+
+- name: Check if sapadm uid is set 
+  fail:
+    msg: "Please use sap_sapdm_uid to define sapadm userid"
+  when: ( sap_sapadm_uid is undefined ) or ( sap_sapadm_uid  is none ) or ( sap_sapadm_uid | trim == '' )
+    
+- name: Check if sapadm password is set 
+  fail:
+    msg: "Please use sap_sapdm_pw_clear to define sapadm password in clear text"
+  when: ( sap_sapadm_pw_clear is undefined ) or (sap_sapadm_pw_clear is none ) or (sap_sapadm_pw_clear| trim == '' )
+    
+- name: Check if sapsys gid is set 
+  fail:
+    msg: "Please use sap_sapsys_gid to define sapsys gid"
+  when: ( sap_sapsys_gid is undefined ) or (sap_sapsys_gid is none ) or  (sap_sapsys_gid| trim == '' )
+
+- name: Create encrypted password
+  set_fact:
+    sap_sapadm_pw: "{{ sap_sapadm_pw_clear|password_hash('sha512') }}" 
+  when: 
+    - sap_sapadm_pw_clear is defined
+    - not (sap_sapadm_pw_clear is none )
+    - not (sap_sapadm_pw_clear| trim == '' )
+
 ## Create USER and GROUP for SAP HOST Agent
-- name: ensure sapsys group is created with gid {{ sap_gid_sapsys }}
+- name: ensure sapsys group is created with gid {{ sap_sapsys_gid }}
   group:
     name: sapsys
-    gid: "{{ sap_gid_sapsys }}"
+    gid: "{{ sap_sapsys_gid }}"
     state: present
 
-- name: ensure sapadm user is created with uid {{ sap_uid_sapadm }}
+- name: ensure sapadm user is created with uid {{ sap_sapadm_uid }}
   user:
     name: sapadm
-    uid: "{{ sap_uid_sapadm }}"
+    uid: "{{ sap_sapadm_uid }}"
     comment: "SAP Host Agent"
     group: sapsys
-    password: "{{ sap_hana_hostagent_sapadm_pw_clear|password_hash('sha512') }}"
+    password: "{{ sap_sapadm_pw) }}"
 
 # Check if installatian parameters are set
 - name: Check required parameters
