@@ -71,7 +71,7 @@
     uid: "{{ sap_sapadm_uid }}"
     comment: "SAP Host Agent"
     group: sapsys
-    password: "{{ sap_sapadm_pw) }}"
+    password: "{{ sap_sapadm_pw }}"
 
 # Check if installatian parameters are set
 - name: Check required parameters
