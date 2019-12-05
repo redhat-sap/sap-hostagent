@@ -1,56 +1,44 @@
-sap-hana-hostagent
-==================
+# sap-hostagent [![Build Status](https://travis-ci.com/redhat-sap/sap-hostagent.svg?branch=master)](https://travis-ci.com/redhat-sap/sap-hostagent)
 
 SAP Host Agent is an agent that can accomplish several life-cycle management tasks, such as operating system monitoring, database monitoring, system instance control and provisioning.
 
-It is recommended to install sap-host agent upfront in any HA environment.
+It is recommended to install SAP Host Agent upfront in any HA environment.
 
 You can find the latest Documentation in [SAP NOTE 1907566](https://launchpad.support.sap.com/#/notes/1907566)
 
-This role installs or updates teh sap host agent on a RHEL 6.7 or 7.x system. It is provided as RPM package, tarball or as part of an SAP softwarebundle.
-While Redhat recommends RPM for easier upgrade, this role take care of all formats.
+This role installs or updates the SAP Host Agent on a RHEL 8.x system. It is provided as RPM package, tarball or as part of an SAP softwarebundle.
+While Red Hat recommends RPM for easier upgrade, this role take care of all formats.
 
-Requirements
-------------
+## Requirements
 
 This role is intended to use on a RHEL system that gets SAP software.
 So your system needs to be installed with at least the RHEL core packages, properly registered and prepared for HANA or Netweaver installation.
 
 It needs access to the software repositories required to install SAP HANA (see also: [How to subscribe SAP HANA systems to the Update Services for SAP Solutions](https://access.redhat.com/solutions/3075991))
-You can use the [subscribe-rhn](https://galaxy.ansible.com/mk-ansible-roles/subscribe-rhn/)  role to automate this process
 
-To install SAP software on Red Hat Enterprise Linux 6 or 7 you need some additional packages which come in a special repository. To get this repository you need to have one
+You can use the [redhat_sap.sap_rhsm](https://galaxy.ansible.com/redhat_sap/sap_rhsm) Galaxy Role to automate this process
+
+To install SAP software on Red Hat Enterprise Linux 8 you need some additional packages which come in a special repository. To get this repository you need to have one
 of the following products:
 
- - [RHEL for SAP Solutions](https://access.redhat.com/solutions/3082481) (premium, standard, developer Edition)
- - [RHEL for Business Partner NFRs](https://partnercenter.redhat.com/NFRPageLayout)
+- [RHEL for SAP Solutions](https://access.redhat.com/solutions/3082481) (premium, standard, developer Edition)
+- [RHEL for Business Partner NFRs](https://partnercenter.redhat.com/NFRPageLayout)
 
-[Click here](https://developers.redhat.com/products/sap/download/) to achieve a personal developer edition of RHEL for SAP solutions. Please register as a developer and download the developer edition.
+[Click here](https://developers.redhat.com/products/sap/download/) to achieve a personal developer edition of RHEL for SAP Solutions. Please register as a developer and download the developer edition.
 
 - [Registration Link](http://developers.redhat.com/register) :
-  Here you can either register a new personal account or link it to an already existing
-  **personal** Red Hat Network account.
-- [Download Link](https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.2/x86_64/product-software):
-  Here you can download the Installation DVD for RHEL with your previously registered
-  account
+  Here you can either register a new personal account or link it to an already existing **personal** Red Hat Network account.
+- [Download Link](https://access.redhat.com/downloads/):
+  Here you can download the Installation DVD for RHEL with your previously registered account
 
 *NOTE:* This is a regular RHEL installation DVD as RHEL for SAP Solutions is no additional
  product but only a special bundling. The subscription grants you access to the additional
  packages through our content delivery network(CDN) after installation.
 
 It is also important that your disks are setup according to the [SAP storage requirements for SAP HANA](https://www.sap.com/documents/2015/03/74cdb554-5a7c-0010-82c7-eda71af511fa.html). This [BLOG](https://blogs.sap.com/2017/03/07/the-ultimate-guide-to-effective-sizing-of-sap-hana/) is also quite helpful when sizing HANA systems.
-You can use the [disk-init](https://galaxy.ansible.com/mk-ansible-roles/disk-init/)  role to automate this process
 
-If you want to use this system in production make sure time service is configured correctly. You can use [rhel-system-roles](https://access.redhat.com/articles/3050101) to automate this
 
-Role Variables
---------------
-
-There are variables that are used through all `sap-*`, `sap-hana-*` roles. These variables are prefixed accordingly with `sap_`, `sap_hana_` instead of the complete rolename.
-
-### Global Variables
-
-The following variables may be used across all sap-* roles:
+## Role Variables
 
 ```yaml
 
@@ -67,18 +55,18 @@ sap_hana_data: "/hana/log"
 ```
 
 The following variable define the UID and GID for the required user to run hostagent. As this might be used in other SAP software as well, the are prefixed as global variable:
+
 ```yaml
 sap_sapadm_uid: 20202
-sap_sapadm_pw_clear: "MyS3cret!" 
+sap_sapadm_pw_clear: "MyS3cret!"
 sap_sapsys_gid: 20202
 ```
-
-### Mandatory Role variables
 
 For the above user, you need to define a password for authentication and SSL encryption:
 ```yaml
 sap_hana_hostagent_ssl_pw: "MyS3cret!"
 ```
+
 It is recommended to use `ansible-vault` to encrypt these variables.
 
 ```yaml
@@ -92,31 +80,43 @@ Please note: If you use RPM please honor the following:
 - it is recommended to add the RPM package to a custom repository or satellite. In that case just add the name in `sap_hana_hostagent_rpm`
 
 
-
-### Optional Role Variables
-
 if you do an install or upgrade from archive you need to define your unarchive command. If you already have a previous version  on your system it is likely to be `/usr/sap/hostctrl/exe/SAPCAR`
 So this is the default then
+
 ```yaml
 sap_hana_hostagent_unarchive_cmd: "/usr/sap/hostctrl/exe/SAPCAR xvf"
 ```
 
-Example Playbook
-----------------
+## Dependencies
 
-Here is an example playbook that installs SAP hostagent
+None
+
+## Example Playbook
+
+```yaml
+    - hosts: servers
+      roles:
+      - role: sap-hostagent
+```
+
+## Example Inventory
+
+When using RPM:
 
 ```yaml
 
 ```
 
-License
--------
+When using SAR:
 
+```yaml
 
-Author Information
-------------------
+```
 
-Markus Koch
+## License
 
-Please leave comments in the github repo issue list
+GPLv3
+
+## Author Information
+
+Red Hat SAP Community of Practice
