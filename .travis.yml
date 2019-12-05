@@ -19,4 +19,5 @@ script:
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/?branch=master
-    if: branch = master
+    on_pull_requests: false
+    on_failure: never
