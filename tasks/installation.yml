@@ -35,28 +35,28 @@
 
 ###### Preparation steps
 
-- name: Check if sapadm uid is set 
+- name: Check if sapadm uid is set
   fail:
     msg: "Please use sap_sapdm_uid to define sapadm userid"
-  when: ( sap_sapadm_uid is undefined ) or ( sap_sapadm_uid  is none ) or ( sap_sapadm_uid | trim == '' )
-    
-- name: Check if sapadm password is set 
+  when: ( sap_sapadm_uid is undefined ) or ( sap_sapadm_uid  is none ) or ( sap_sapadm_uid | length > 0 )
+
+- name: Check if sapadm password is set
   fail:
     msg: "Please use sap_sapdm_pw_clear to define sapadm password in clear text"
-  when: ( sap_sapadm_pw_clear is undefined ) or (sap_sapadm_pw_clear is none ) or (sap_sapadm_pw_clear| trim == '' )
-    
-- name: Check if sapsys gid is set 
+  when: ( sap_sapadm_pw_clear is undefined ) or (sap_sapadm_pw_clear is none ) or (sap_sapadm_pw_clear| length > 0 )
+
+- name: Check if sapsys gid is set
   fail:
     msg: "Please use sap_sapsys_gid to define sapsys gid"
-  when: ( sap_sapsys_gid is undefined ) or (sap_sapsys_gid is none ) or  (sap_sapsys_gid| trim == '' )
+  when: ( sap_sapsys_gid is undefined ) or (sap_sapsys_gid is none ) or  (sap_sapsys_gid| length > 0 )
 
 - name: Create encrypted password
   set_fact:
-    sap_sapadm_pw: "{{ sap_sapadm_pw_clear|password_hash('sha512') }}" 
-  when: 
+    sap_sapadm_pw: "{{ sap_sapadm_pw_clear|password_hash('sha512') }}"
+  when:
     - sap_sapadm_pw_clear is defined
     - not (sap_sapadm_pw_clear is none )
-    - not (sap_sapadm_pw_clear| trim == '' )
+    - not (sap_sapadm_pw_clear| length > 0 )
 
 ## Create USER and GROUP for SAP HOST Agent
 - name: ensure sapsys group is created with gid {{ sap_sapsys_gid }}
@@ -83,9 +83,9 @@
             - sap_hana_hostagent_archive: /path/to/sap_hana_hostagent_archive\n
           *****************************************************************************\n"
   when:
-    - (sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm | trim == '')
-    - (sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | trim == '')
-    - (sap_hana_hostagent_installdir is undefined) or (sap_hana_hostagent_installdir is none) or (sap_hana_hostagent_installdir | trim == '')
+    - (sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm | length > 0)
+    - (sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | length > 0)
+    - (sap_hana_hostagent_installdir is undefined) or (sap_hana_hostagent_installdir is none) or (sap_hana_hostagent_installdir | length > 0)
 
 ### Install from RPM
 #
@@ -95,7 +95,7 @@
   package:
     name: "{{ sap_hana_hostagent_rpm }}"
     state: present
-  when: not((sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm | trim == ''))
+  when: not((sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm | length > 0))
 
 ### Install from Archive
 #
@@ -122,7 +122,7 @@
         - sap_hana_hostagent_register_update.stat.exists
         - sap_hana_hostagent_register_archive.stat.exists
         - sap_hana_hostagent_register_archive.stat.mimetype == "application/octet-stream"
-        - not ((sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | trim == ''))
+        - not ((sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | length > 0))
 
       ###
       #  Wenn Update durchgeführt wird ist folgender Outout in STDERR:
@@ -143,8 +143,8 @@
         chdir: "{{ sap_hana_hostagent_installdir }}"
       when:
         - sap_hana_hostagent_register_update.stat.exists
-        - (sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | trim == '')
-        - not ((sap_hana_hostagent_installdir is undefined) or (sap_hana_hostagent_installdir is none) or (sap_hana_hostagent_installdir | trim == ''))
+        - (sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | length > 0)
+        - not ((sap_hana_hostagent_installdir is undefined) or (sap_hana_hostagent_installdir is none) or (sap_hana_hostagent_installdir | length > 0))
 
     - name: Initial install of SAP Host Agent
       block:
@@ -169,7 +169,7 @@
               set_fact:
                 sap_hana_hostagent_installdir: /tmp/install-hostagent
 
-          when: not((sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | trim == ''))
+          when: not((sap_hana_hostagent_archive is undefined) or (sap_hana_hostagent_archive is none) or (sap_hana_hostagent_archive | length > 0))
 
         - name: ensure SAP Host Agent is installed from "{{ sap_hana_hostagent_installdir }}"
           shell: |
@@ -188,7 +188,7 @@
       when:
         - not sap_hana_hostagent_register_update.stat.exists
 
-  when: (sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm | trim == '')
+  when: (sap_hana_hostagent_rpm is undefined) or (sap_hana_hostagent_rpm is none) or (sap_hana_hostagent_rpm | length > 0)
 
 #### NOW COMES THE OLD STUFF
 #- name: Installation File SAP HANA Host Agent

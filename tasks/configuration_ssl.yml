@@ -29,7 +29,7 @@
 
 
 - name: Ensure SSL is configured for saphostagent
-  shell: /usr/local/bin/preconfigure_sap_install_sslforsaphostagent.sh
+  command: /usr/local/bin/preconfigure_sap_install_sslforsaphostagent.sh
   notify: "Restart HostAgent"
   args:
     creates: /usr/sap/hostctrl/exe/sec/SAPSSLS.pse

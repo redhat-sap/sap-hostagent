@@ -36,7 +36,7 @@
     mode: 0755
 
 - name: Install SAP HANA Host Agent
-  shell: /usr/local/bin/preconfigure_sap_install_saphostagent.sh
+  command: /usr/local/bin/preconfigure_sap_install_saphostagent.sh
   args:
     creates: /usr/sap/hostctrl/exe/saphostexec
 
@@ -59,7 +59,7 @@
 
 
 - name: Ensure SSL is configured for saphostagent
-  shell: /usr/local/bin/preconfigure_sap_install_sslforsaphostagent.sh
+  command: /usr/local/bin/preconfigure_sap_install_sslforsaphostagent.sh
   notify: "Restart HostAgent"
   args:
     creates: /usr/sap/hostctrl/exe/sec/SAPSSLS.pse
