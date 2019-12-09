@@ -18,7 +18,7 @@ script:
   - ansible-lint .
 
 notifications:
-  webhooks: 
+  webhooks:
     urls:
       - https://galaxy.ansible.com/api/v1/notifications/?branch=master
     on_failure: never

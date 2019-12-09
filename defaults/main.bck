@@ -2,14 +2,11 @@
 # Global Default variables
 # Adapt to your default settings
 
-# Installation type: RPM, SAR or OTHER -- Defaulting to RPM
+# Installation type: RPM, SAR or 
 installation_type: "rpm"
 
-# Temporary directory for SAPHOSTAGENT files
-agent_tmp_directory: "/tmp/hostagent"
-
-# Remove the temporary directory after the installation has been done
-clean_tmp_directory: false
+# Want extensive debugging
+debuglevel: 3
 
 # Default hostanem
 sap_hostname: "{{ ansible_hostname }}"

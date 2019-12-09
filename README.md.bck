@@ -37,6 +37,7 @@ of the following products:
 
 It is also important that your disks are setup according to the [SAP storage requirements for SAP HANA](https://www.sap.com/documents/2015/03/74cdb554-5a7c-0010-82c7-eda71af511fa.html). This [BLOG](https://blogs.sap.com/2017/03/07/the-ultimate-guide-to-effective-sizing-of-sap-hana/) is also quite helpful when sizing HANA systems.
 
+
 ## Role Variables
 
 ### RPM based installations
@@ -48,6 +49,7 @@ It is also important that your disks are setup according to the [SAP storage req
 |rpm_file_name|Local RPM file name|yes|
 |agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
 |clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
+
 
 ### SAR based installations
 
@@ -61,13 +63,43 @@ It is also important that your disks are setup according to the [SAP storage req
 |agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
 |clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
 
+
+The following variable define the UID and GID for the required user to run hostagent. As this might be used in other SAP software as well, the are prefixed as global variable:
+
+```yaml
+sap_sapadm_uid: 20202
+sap_sapadm_pw_clear: "MyS3cret!"
+sap_sapsys_gid: 20202
+```
+
+For the above user, you need to define a password for authentication and SSL encryption:
+```yaml
+sap_hana_hostagent_ssl_pw: "MyS3cret!"
+```
+
+It is recommended to use `ansible-vault` to encrypt these variables.
+
+```yaml
+# Define either one of the following variables depending on installation method
+#sap_hana_hostagent_installdir: /path/to/unpacked/hostagent packages
+#sap_hana_hostagent_rpm: /path/to/hostagentrpm
+#sap_hana_hostagent_archive: /path/to/sap_hana_hostagent_archive
+```
+Please note: If you use RPM please honor the following:
+- the default profile path `/usr/sap` must not be changed
+- it is recommended to add the RPM package to a custom repository or satellite. In that case just add the name in `sap_hana_hostagent_rpm`
+
+
+if you do an install or upgrade from archive you need to define your unarchive command. If you already have a previous version  on your system it is likely to be `/usr/sap/hostctrl/exe/SAPCAR`
+So this is the default then
+
+```yaml
+sap_hana_hostagent_unarchive_cmd: "/usr/sap/hostctrl/exe/SAPCAR xvf"
+```
+
 ## Dependencies
 
-Before using this role ensure your system has been configured properly to run SAP applications.
-
-You can use the supported role `sap-preconfigure` comming with RHEL 7 and 8 with RHEL for SAP Solutions Subscription
-
-The upstream version of this role can be found [here](https://github.com/linux-system-roles/sap-preconfigure)
+None
 
 ## Example Playbook
 
@@ -82,27 +114,13 @@ The upstream version of this role can be found [here](https://github.com/linux-s
 When using RPM:
 
 ```yaml
-installation_type: "rpm"
-rpm_local_path: "/mylocaldir/SAPHOSTAGENT"
-rpm_file_name: "saphostagentrpm_44-20009394.rpm"
-clean_tmp_directory: true
+
 ```
 
 When using SAR:
 
 ```yaml
-installation_type: "sar"
-sar_local_path: "/mylocaldir/SAPHOSTAGENT"
-sar_file_name: "SAPHOSTAGENT44_44-20009394.SAR"
-sapcar_local_path: "/mylocaldir/SAPHOSTAGENT"
-sapcar_file_name: "SAPCAR_1311-80000935.EXE"
-clean_tmp_directory: true
-```
 
-When using OTHER:
-
-```yaml
-installation_type: "other"
 ```
 
 ## License
