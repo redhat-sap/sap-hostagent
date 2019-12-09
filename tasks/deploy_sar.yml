@@ -23,4 +23,4 @@
   register: installagent
   args:
     chdir: "{{ agent_tmp_directory }}"
-  changed_when: "'Install service' in extractagent.stdout"
+  changed_when: "'Install service' in installagent.stdout"
