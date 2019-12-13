@@ -11,9 +11,9 @@
 - import_tasks: deploy_sar.yml
   when: installation_type == "sar"
 
-# Deploy SAPHOSTAGENT using other file
-- import_tasks: deploy_sar.yml
-  when: installation_type == "other"
+# Deploy SAPHOSTAGENT using SAP Installation Bundle
+- import_tasks: deploy_bundle.yml
+  when: installation_type == "bundle"
 
 # Execute common post installation tasks
 - import_tasks: common_post.yml

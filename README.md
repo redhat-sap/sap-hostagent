@@ -61,6 +61,15 @@ It is also important that your disks are setup according to the [SAP storage req
 |agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
 |clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
 
+### SAP Bundle based installations
+
+| variable | info | required? |
+|:--------:|:----:|:---------:|
+|installation_type|Source type of the installation for SAPHOSTAGENT|yes with `bundle` value|
+|bundle_path|Target host directory path where SAP Installation Bundle has been unarchived|
+|agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
+|clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
+
 ## Dependencies
 
 Before using this role ensure your system has been configured properly to run SAP applications.
@@ -99,10 +108,12 @@ sapcar_file_name: "SAPCAR_1311-80000935.EXE"
 clean_tmp_directory: true
 ```
 
-When using OTHER:
+When using SAP Bundle:
 
 ```yaml
-installation_type: "other"
+installation_type: "bundle"
+bundle_path: "/usr/local/src/HANA-BUNDLE/51053381"
+clean_tmp_directory: true
 ```
 
 ## License
