@@ -30,6 +30,8 @@
   environment:
     LD_LIBRARY_PATH: /usr/sap/hostctrl/exe
     SECUDIR: /usr/sap/hostctrl/exe/sec
+  register: ssl_config_output
+  changed_when: "'Certificate Request:' in ssl_config_output.stdout"
 
 - name: Grant SAP Host Agent access to the server PSE
   command: >
@@ -43,6 +45,8 @@
   environment:
     LD_LIBRARY_PATH: /usr/sap/hostctrl/exe
     SECUDIR: /usr/sap/hostctrl/exe/sec
+  register: ssl_config_output
+  changed_when: "'Added SSO-credentials for PSE' in ssl_config_output.stdout"
 
 # Right now there is no option to import teh signed certificate. The CSR must be signed
 # by a valid CA in order to import it
@@ -71,6 +75,10 @@
   environment:
     LD_LIBRARY_PATH: /usr/sap/hostctrl/exe
     SECUDIR: /usr/sap/hostctrl/exe/sec
+  register: ssl_config_output
+  changed_when: "'Opening PSE' in ssl_config_output.stdout"
 
 - name: Restart SAPHOSTAGENT
   command: /usr/sap/hostctrl/exe/saphostexec -restart
+  register: ssl_config_output
+  changed_when: "'start hostcontrol using profile' in ssl_config_output.stdout"
