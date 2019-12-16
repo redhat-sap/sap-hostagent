@@ -24,6 +24,7 @@
     -x "{{ ssl_passwd }}"
     -r /tmp/myhost-csr.p10
     "CN={{ ansible_fqdn }}, O={{ ssl_org }}, C={{ ssl_contry }}"
+  become: yes
   become_user: sapadm
   args:
     chdir: /usr/sap/hostctrl/exe/
@@ -39,6 +40,7 @@
     -p SAPSSLS.pse
     -x "{{ ssl_passwd }}"
     -O sapadm
+  become: yes
   become_user: sapadm
   args:
     chdir: /usr/sap/hostctrl/exe/
@@ -69,6 +71,7 @@
     /usr/sap/hostctrl/exe/sapgenpse get_my_name
     -x "{{ ssl_passwd }}"
     -v
+  become: yes
   become_user: sapadm
   args:
     chdir: /usr/sap/hostctrl/exe/
