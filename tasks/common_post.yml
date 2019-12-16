@@ -1,5 +1,4 @@
 ---
-
 # Ensure {{ agent_tmp_directory }} directory is removed from the target host
 - name: Ensure {{ agent_tmp_directory }} directory does not exist
   file:

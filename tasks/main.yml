@@ -15,5 +15,9 @@
 - import_tasks: deploy_bundle.yml
   when: installation_type == "bundle"
 
+# Configuring SSL for SAP Host Agent
+- import_tasks: config_ssl.yml
+  when: config_ssl
+
 # Execute common post installation tasks
 - import_tasks: common_post.yml

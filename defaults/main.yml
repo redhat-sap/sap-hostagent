@@ -13,3 +13,6 @@ clean_tmp_directory: false
 
 # This role must be run as ROOT user
 ansible_become: true
+
+# SSL Variables
+config_ssl: False

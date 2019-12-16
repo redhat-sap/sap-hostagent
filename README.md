@@ -70,6 +70,17 @@ It is also important that your disks are setup according to the [SAP storage req
 |agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
 |clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
 
+### SSL Configuration
+
+Right now the role will configure the PSE and create a CSR. Adding signed certificates from a valid CA is not supported yet
+
+| variable | info | required? |
+|:--------:|:----:|:---------:|
+|config_ssl|This boolean variable will configure Agent for SSL communication|no (defaulted in the role)|
+|ssl_passwd|Password to be used for the CSR|yes when `config_ssl` True|
+|ssl_org|Organization information for the CSR|yes when `config_ssl` True|
+|ssl_contry|Country information for the CSR|yes when `config_ssl` True|
+
 ## Dependencies
 
 Before using this role ensure your system has been configured properly to run SAP applications.

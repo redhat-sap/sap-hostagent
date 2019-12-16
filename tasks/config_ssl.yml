@@ -1,0 +1,76 @@
+# Ensure 'sapadm' user home directory exists
+- name: Ensure 'sapadm' user home directory exists
+  file:
+    path: "/home/sapadm"
+    state: directory
+    mode: '0755'
+    owner: sapadm
+    group: sapsys
+
+# Ensure SSL is configured for agent communication
+# https://help.sap.com/viewer/6e1636d91ccc458c987094ee1fb864ae/HAG_CURRENT_VERSION/en-US/6aac42c2e742413da050eaecd57f785d.html
+- name: Prepare the Personal Security Environment (PSE) for the server
+  file:
+    path: "/usr/sap/hostctrl/exe/sec"
+    state: directory
+    mode: '0755'
+    owner: sapadm
+    group: sapsys
+
+- name: Create the server PSE, the server certificate therein, and the Certificate Signing Request (CSR)
+  command: >
+    /usr/sap/hostctrl/exe/sapgenpse gen_pse
+    -p SAPSSLS.pse
+    -x "{{ ssl_passwd }}"
+    -r /tmp/myhost-csr.p10
+    "CN={{ ansible_fqdn }}, O={{ ssl_org }}, C={{ ssl_contry }}"
+  become_user: sapadm
+  args:
+    chdir: /usr/sap/hostctrl/exe/
+  environment:
+    LD_LIBRARY_PATH: /usr/sap/hostctrl/exe
+    SECUDIR: /usr/sap/hostctrl/exe/sec
+
+- name: Grant SAP Host Agent access to the server PSE
+  command: >
+    /usr/sap/hostctrl/exe/sapgenpse seclogin
+    -p SAPSSLS.pse
+    -x "{{ ssl_passwd }}"
+    -O sapadm
+  become_user: sapadm
+  args:
+    chdir: /usr/sap/hostctrl/exe/
+  environment:
+    LD_LIBRARY_PATH: /usr/sap/hostctrl/exe
+    SECUDIR: /usr/sap/hostctrl/exe/sec
+
+# Right now there is no option to import teh signed certificate. The CSR must be signed
+# by a valid CA in order to import it
+# 
+# - name: Import the signed certificate into the server PSE
+#   command: >
+#     /usr/sap/hostctrl/exe/sapgenpse import_own_cert
+#     -p SAPSSLS.pse
+#     -x "{{ ssl_passwd }}"
+#     -c /tmp/myhost.p7b
+#   become_user: sapadm
+#   args:
+#     chdir: /usr/sap/hostctrl/exe/
+#   environment:
+#     LD_LIBRARY_PATH: /usr/sap/hostctrl/exe
+#     SECUDIR: /usr/sap/hostctrl/exe/sec
+
+- name: Verify the server certificate chain
+  command: >
+    /usr/sap/hostctrl/exe/sapgenpse get_my_name
+    -x "{{ ssl_passwd }}"
+    -v
+  become_user: sapadm
+  args:
+    chdir: /usr/sap/hostctrl/exe/
+  environment:
+    LD_LIBRARY_PATH: /usr/sap/hostctrl/exe
+    SECUDIR: /usr/sap/hostctrl/exe/sec
+
+- name: Restart SAPHOSTAGENT
+  command: /usr/sap/hostctrl/exe/saphostexec -restart
