@@ -1,49 +1,23 @@
 ---
 
-#- name: Enable Debugging
-#  debug:
-#    verbosity: "{{ debuglevel }}"
+# Execute common pre installation tasks
+- import_tasks: common_pre.yml
 
-# Thomas Bludau 20170508
-# Might be customized on every customer site
-# It is necessary that you have a fix repository,
-# otherwhise added systems could have problems
-# Requirement is that the systems have access
-# to correctly configured repositories.
-#- include: ./2528891.yml
+# Deploy SAPHOSTAGENT using RPM file
+- import_tasks: deploy_rpm.yml
+  when: installation_type == "rpm"
 
-####
-# No OS variables to include
-#
-#- name: include os specific vars
-#  include_vars: '{{ item }}'
-#  with_first_found:
-#    - '{{ ansible_distibution }}_{{ ansible_distribution_version }}.yml'
-#    - '{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml'
-#    - '{{ ansible_os_family }}.yml'
-#  tags:
-#    - 'role::sap-hana-hostagent'
-#    - 'role::sap-hana-hostagent:install'
-#    - 'role::sap-hana-hostagent:config'
+# Deploy SAPHOSTAGENT using SAR file
+- import_tasks: deploy_sar.yml
+  when: installation_type == "sar"
 
-# Installation from rpm
-- import_tasks: installation.yml
-  tags:
-    - 'role::sap-hana-hostagent'
-    - 'role::sap-hana-hostagent:install'
+# Deploy SAPHOSTAGENT using SAP Installation Bundle
+- import_tasks: deploy_bundle.yml
+  when: installation_type == "bundle"
 
-# https://help.sap.com/viewer/6e1636d91ccc458c987094ee1fb864ae/721%20PL003%20CORR9/de-DE/a429500ec8744a20864033686944f12a.html
-# The above Dokumentation describes different configuration options:
-#  - Registrierung von SAP-Host-Agent im SLD aktivieren
-#  - SSL-Konfiguration für SAP-Host-Agent
-#  - Audit-Protokollierung aktivieren
-#  - Nur spezifische IP-Adressen binden
-#  - Überwachung des Betriebssystems - Objektfilter
-#
-# Currently only SSL is implemented --- Feel free to contribute the implementation of the others
+# Configuring SSL for SAP Host Agent
+- import_tasks: config_ssl.yml
+  when: config_ssl
 
-- import_tasks: configuration_ssl.yml
-  tags:
-    - 'role::sap-hana-hostagent'
-    - 'role::sap-hana-hostagent:config'
-    - 'role::sap-hana-hostagent:config:ssl'
+# Execute common post installation tasks
+- import_tasks: common_post.yml

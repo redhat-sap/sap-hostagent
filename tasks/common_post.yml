@@ -1,0 +1,8 @@
+---
+# Ensure {{ agent_tmp_directory }} directory is removed from the target host
+- name: Ensure {{ agent_tmp_directory }} directory does not exist
+  file:
+    path: "{{ agent_tmp_directory }}"
+    state: absent
+    mode: '0755'
+  when: clean_tmp_directory
