@@ -23,7 +23,7 @@
     -p SAPSSLS.pse
     -x "{{ ssl_passwd }}"
     -r /tmp/myhost-csr.p10
-    "CN={{ ansible_fqdn }}, O={{ ssl_org }}, C={{ ssl_contry }}"
+    "CN={{ ansible_fqdn }}, O={{ ssl_org }}, C={{ ssl_country }}"
   become: yes
   become_user: sapadm
   args:

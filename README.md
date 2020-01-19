@@ -79,7 +79,7 @@ Right now the role will configure the PSE and create a CSR. Adding signed certif
 |config_ssl|This boolean variable will configure Agent for SSL communication|no (defaulted in the role)|
 |ssl_passwd|Password to be used for the CSR|yes when `config_ssl` True|
 |ssl_org|Organization information for the CSR|yes when `config_ssl` True|
-|ssl_contry|Country information for the CSR|yes when `config_ssl` True|
+|ssl_country|Country information for the CSR|yes when `config_ssl` True|
 
 ## Dependencies
 
