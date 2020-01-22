@@ -5,19 +5,19 @@
 
 # Deploy SAPHOSTAGENT using RPM file
 - import_tasks: deploy_rpm.yml
-  when: installation_type == "rpm"
+  when: sap_hostagent_installation_type == "rpm"
 
 # Deploy SAPHOSTAGENT using SAR file
 - import_tasks: deploy_sar.yml
-  when: installation_type == "sar"
+  when: sap_hostagent_installation_type == "sar"
 
 # Deploy SAPHOSTAGENT using SAP Installation Bundle
 - import_tasks: deploy_bundle.yml
-  when: installation_type == "bundle"
+  when: sap_hostagent_installation_type == "bundle"
 
 # Configuring SSL for SAP Host Agent
 - import_tasks: config_ssl.yml
-  when: config_ssl
+  when: sap_hostagent_config_ssl
 
 # Execute common post installation tasks
 - import_tasks: common_post.yml
