@@ -3,16 +3,16 @@
 # Adapt to your default settings
 
 # Installation type: RPM, SAR or OTHER -- Defaulting to RPM
-installation_type: "rpm"
+sap_hostagent_installation_type: "rpm"
 
 # Temporary directory for SAPHOSTAGENT files
-agent_tmp_directory: "/tmp/hostagent"
+sap_hostagent_agent_tmp_directory: "/tmp/hostagent"
 
 # Remove the temporary directory after the installation has been done
-clean_tmp_directory: false
+sap_hostagent_clean_tmp_directory: false
 
 # This role must be run as ROOT user
 ansible_become: true
 
 # SSL Variables
-config_ssl: False
+sap_hostagent_config_ssl: False

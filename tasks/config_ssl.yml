@@ -21,9 +21,9 @@
   command: >
     /usr/sap/hostctrl/exe/sapgenpse gen_pse
     -p SAPSSLS.pse
-    -x "{{ ssl_passwd }}"
+    -x "{{ sap_hostagent_ssl_passwd }}"
     -r /tmp/myhost-csr.p10
-    "CN={{ ansible_fqdn }}, O={{ ssl_org }}, C={{ ssl_country }}"
+    "CN={{ ansible_fqdn }}, O={{ sap_hostagent_ssl_org }}, C={{ sap_hostagent_ssl_country }}"
   become: yes
   become_user: sapadm
   args:
@@ -38,7 +38,7 @@
   command: >
     /usr/sap/hostctrl/exe/sapgenpse seclogin
     -p SAPSSLS.pse
-    -x "{{ ssl_passwd }}"
+    -x "{{ sap_hostagent_ssl_passwd }}"
     -O sapadm
   become: yes
   become_user: sapadm
@@ -57,7 +57,7 @@
 #   command: >
 #     /usr/sap/hostctrl/exe/sapgenpse import_own_cert
 #     -p SAPSSLS.pse
-#     -x "{{ ssl_passwd }}"
+#     -x "{{ sap_hostagent_ssl_passwd }}"
 #     -c /tmp/myhost.p7b
 #   become_user: sapadm
 #   args:
@@ -69,7 +69,7 @@
 - name: Verify the server certificate chain
   command: >
     /usr/sap/hostctrl/exe/sapgenpse get_my_name
-    -x "{{ ssl_passwd }}"
+    -x "{{ sap_hostagent_ssl_passwd }}"
     -v
   become: yes
   become_user: sapadm

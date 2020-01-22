@@ -43,32 +43,32 @@ It is also important that your disks are setup according to the [SAP storage req
 
 | variable | info | required? |
 |:--------:|:----:|:---------:|
-|installation_type|Source type of the installation for SAPHOSTAGENT|yes with `rpm` value|
-|rpm_local_path|Local directory path where RPM file is located|yes|
-|rpm_file_name|Local RPM file name|yes|
-|agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
-|clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
+|sap_hostagent_installation_type|Source type of the installation for SAPHOSTAGENT|yes with `rpm` value|
+|sap_hostagent_rpm_local_path|Local directory path where RPM file is located|yes|
+|sap_hostagent_rpm_file_name|Local RPM file name|yes|
+|sap_hostagent_agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
+|sap_hostagent_clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
 
 ### SAR based installations
 
 | variable | info | required? |
 |:--------:|:----:|:---------:|
-|installation_type|Source type of the installation for SAPHOSTAGENT|yes with `sar` value|
-|sar_local_path|Local directory path where SAR file is located|yes|
-|sar_file_name|Local SAR file name|yes|
-|sapcar_local_path|Local directory path where SAPCAR tool file is located|yes|
-|sapcar_file_name|Local SAPCAR tool file name|yes|
-|agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
-|clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
+|sap_hostagent_installation_type|Source type of the installation for SAPHOSTAGENT|yes with `sar` value|
+|sap_hostagent_sar_local_path|Local directory path where SAR file is located|yes|
+|sap_hostagent_sar_file_name|Local SAR file name|yes|
+|sap_hostagent_sapcar_local_path|Local directory path where SAPCAR tool file is located|yes|
+|sap_hostagent_sapcar_file_name|Local SAPCAR tool file name|yes|
+|sap_hostagent_agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
+|sap_hostagent_clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
 
 ### SAP Bundle based installations
 
 | variable | info | required? |
 |:--------:|:----:|:---------:|
-|installation_type|Source type of the installation for SAPHOSTAGENT|yes with `bundle` value|
-|bundle_path|Target host directory path where SAP Installation Bundle has been unarchived|
-|agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
-|clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
+|sap_hostagent_installation_type|Source type of the installation for SAPHOSTAGENT|yes with `bundle` value|
+|sap_hostagent_bundle_path|Target host directory path where SAP Installation Bundle has been unarchived|
+|sap_hostagent_agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
+|sap_hostagent_clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
 
 ### SSL Configuration
 
@@ -76,10 +76,10 @@ Right now the role will configure the PSE and create a CSR. Adding signed certif
 
 | variable | info | required? |
 |:--------:|:----:|:---------:|
-|config_ssl|This boolean variable will configure Agent for SSL communication|no (defaulted in the role)|
-|ssl_passwd|Password to be used for the CSR|yes when `config_ssl` True|
-|ssl_org|Organization information for the CSR|yes when `config_ssl` True|
-|ssl_country|Country information for the CSR|yes when `config_ssl` True|
+|sap_hostagent_config_ssl|This boolean variable will configure Agent for SSL communication|no (defaulted in the role)|
+|sap_hostagent_ssl_passwd|Password to be used for the CSR|yes when `sap_hostagent_config_ssl` True|
+|sap_hostagent_ssl_org|Organization information for the CSR|yes when `sap_hostagent_config_ssl` True|
+|sap_hostagent_ssl_country|Country information for the CSR|yes when `sap_hostagent_config_ssl` True|
 
 ## Dependencies
 
@@ -102,29 +102,29 @@ The upstream version of this role can be found [here](https://github.com/linux-s
 When using RPM:
 
 ```yaml
-installation_type: "rpm"
-rpm_local_path: "/mylocaldir/SAPHOSTAGENT"
-rpm_file_name: "saphostagentrpm_44-20009394.rpm"
-clean_tmp_directory: true
+sap_hostagent_installation_type: "rpm"
+sap_hostagent_rpm_local_path: "/mylocaldir/SAPHOSTAGENT"
+sap_hostagent_rpm_file_name: "saphostagentrpm_44-20009394.rpm"
+sap_hostagent_clean_tmp_directory: true
 ```
 
 When using SAR:
 
 ```yaml
-installation_type: "sar"
-sar_local_path: "/mylocaldir/SAPHOSTAGENT"
-sar_file_name: "SAPHOSTAGENT44_44-20009394.SAR"
-sapcar_local_path: "/mylocaldir/SAPHOSTAGENT"
-sapcar_file_name: "SAPCAR_1311-80000935.EXE"
-clean_tmp_directory: true
+sap_hostagent_installation_type: "sar"
+sap_hostagent_sar_local_path: "/mylocaldir/SAPHOSTAGENT"
+sap_hostagent_sar_file_name: "SAPHOSTAGENT44_44-20009394.SAR"
+sap_hostagent_sapcar_local_path: "/mylocaldir/SAPHOSTAGENT"
+sap_hostagent_sapcar_file_name: "SAPCAR_1311-80000935.EXE"
+sap_hostagent_clean_tmp_directory: true
 ```
 
 When using SAP Bundle:
 
 ```yaml
-installation_type: "bundle"
-bundle_path: "/usr/local/src/HANA-BUNDLE/51053381"
-clean_tmp_directory: true
+sap_hostagent_installation_type: "bundle"
+sap_hostagent_bundle_path: "/usr/local/src/HANA-BUNDLE/51053381"
+sap_hostagent_clean_tmp_directory: true
 ```
 
 ## License
