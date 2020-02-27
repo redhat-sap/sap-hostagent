@@ -44,7 +44,8 @@ It is also important that your disks are setup according to the [SAP storage req
 | variable | info | required? |
 |:--------:|:----:|:---------:|
 |sap_hostagent_installation_type|Source type of the installation for SAPHOSTAGENT|yes with `rpm` value|
-|sap_hostagent_rpm_local_path|Local directory path where RPM file is located|yes|
+|sap_hostagent_rpm_local_path|Local directory path where RPM file is located|yes, unless `sap_hostagent_rpm_remote_path` is used|
+|sap_hostagent_rpm_remote_path|Local directory path where RPM file is located|yes, unless `sap_hostagent_rpm_local_path` is used|
 |sap_hostagent_rpm_file_name|Local RPM file name|yes|
 |sap_hostagent_agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
 |sap_hostagent_clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
