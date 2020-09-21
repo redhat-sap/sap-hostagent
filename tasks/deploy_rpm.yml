@@ -10,10 +10,12 @@
   yum:
     name: "{{ sap_hostagent_agent_tmp_directory }}/{{ sap_hostagent_rpm_file_name }}"
     state: present
+    disable_gpg_check: yes
   when: sap_hostagent_rpm_local_path is defined
 
 - name: Ensure RPM file is installed
   yum:
     name: "{{ sap_hostagent_rpm_remote_path }}/{{ sap_hostagent_rpm_file_name }}"
     state: present
+    disable_gpg_check: yes
   when: sap_hostagent_rpm_remote_path is defined
