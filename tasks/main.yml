@@ -11,6 +11,10 @@
 - import_tasks: deploy_sar.yml
   when: sap_hostagent_installation_type == "sar"
 
+ # Deploy SAPHOSTAGENT using SAR file existing on system
+- import_tasks: deploy_sar_remote.yml
+  when: sap_hostagent_installation_type == "sar-remote"
+
 # Deploy SAPHOSTAGENT using SAP Installation Bundle
 - import_tasks: deploy_bundle.yml
   when: sap_hostagent_installation_type == "bundle"
