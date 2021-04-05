@@ -4,6 +4,7 @@
   copy:
     src: "{{ sap_hostagent_rpm_local_path }}/{{ sap_hostagent_rpm_file_name }}"
     dest: "{{ sap_hostagent_agent_tmp_directory }}/{{ sap_hostagent_rpm_file_name }}"
+    mode: '0755'
   when: sap_hostagent_rpm_local_path is defined
 
 - name: Ensure RPM file is installed
