@@ -43,14 +43,14 @@ It is also important that your disks are setup according to the [SAP storage req
 
 | variable | info | required? |
 |:--------:|:----:|:---------:|
-|sap_hostagent_installation_type|Source type of the installation for SAPHOSTAGENT|yes with `rpm` value|
+|sap_hostagent_installation_type|Source type of the installation for SAPHOSTAGENT|yes, with `rpm` value|
 |sap_hostagent_rpm_local_path|Local directory path where RPM file is located|yes, unless `sap_hostagent_rpm_remote_path` is used|
 |sap_hostagent_rpm_remote_path|Local directory path where RPM file is located|yes, unless `sap_hostagent_rpm_local_path` is used|
 |sap_hostagent_rpm_file_name|Local RPM file name|yes|
 |sap_hostagent_agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
 |sap_hostagent_clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
 
-### SAR based installations
+### SAR based installations (content on ansible control node)
 
 | variable | info | required? |
 |:--------:|:----:|:---------:|
@@ -61,6 +61,19 @@ It is also important that your disks are setup according to the [SAP storage req
 |sap_hostagent_sapcar_file_name|Local SAPCAR tool file name|yes|
 |sap_hostagent_agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
 |sap_hostagent_clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
+
+### SAR based installations (with content existing on target node)
+
+| variable | info | required? |
+|:--------:|:----:|:---------:|
+|sap_hostagent_installation_type|Source type of the installation for SAPHOSTAGENT|yes with `sar-remote` value|
+|sap_hostagent_sar_remote_path|Remote directory path where SAR tool file is located|yes|
+|sap_hostagent_sar_file_name|SAR tool file name|yes|
+|sap_hostagent_sapcar_remote_path|Remote directory path of SAR archive|yes|
+|sap_hostagent_sapcar_file_name|Remote file name of SAR archive|yes|
+|sap_hostagent_agent_tmp_directory|Temporary directory path that will be created on the target host|no (defaulted in the role)|
+|sap_hostagent_clean_tmp_directory|Boolean variable to indicate if the temporary directory will be removed or not afer the installation| no (defaulted in the role)|
+
 
 ### SAP Bundle based installations
 

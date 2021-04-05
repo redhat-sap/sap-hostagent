@@ -4,6 +4,7 @@
   copy:
     src: "{{ sap_hostagent_sar_local_path }}/{{ sap_hostagent_sar_file_name }}"
     dest: "{{ sap_hostagent_agent_tmp_directory }}/{{ sap_hostagent_sar_file_name }}"
+    mode: '0755'
 
 - name: Copy SAPCAR tool to the target host
   copy:
