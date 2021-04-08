@@ -143,7 +143,7 @@ sap_hostagent_clean_tmp_directory: true
 
 ## License
 
-GPLv3
+Apache License 2.0
 
 ## Author Information
 
